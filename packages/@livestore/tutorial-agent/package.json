@@ -1,0 +1,30 @@
+{
+  "name": "@livestore/tutorial-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "tutorial-agent": "dist/cli/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist",
+    "dev": "tsc -b -w"
+  },
+  "dependencies": {
+    "esbuild-register": "^3.6.0",
+    "playwright": "^1.48.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3"
+  }
+}
+
