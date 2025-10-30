@@ -13,7 +13,7 @@ export type ParsedStep =
       content: string
     }
 
-const LANG_TO_KIND: Record<string, ParsedStep['kind']> = {
+const LANG_TO_KIND: Record<string, 'shell' | 'npm' | 'wrangler'> = {
   bash: 'shell',
   sh: 'shell',
   zsh: 'shell',
@@ -44,7 +44,11 @@ export async function parseMdxFiles(files: string[]): Promise<ParsedStep[]> {
       // Handle file-edit fences: require file= in the info string, optional mode=
       const fileMatch = info.match(/\bfile=([^\s]+)\b/)
       if (fileMatch) {
-        const file = fileMatch[1]
+        const file = (fileMatch[1] ?? '').trim()
+        if (!file) {
+          match = fenceRegex.exec(content)
+          continue
+        }
         const modeMatch = info.match(/\bmode=(write|append)\b/)
         const mode = (modeMatch?.[1] as 'write' | 'append') ?? 'write'
         steps.push({ kind: 'file', file, mode, content: code })
@@ -54,7 +58,8 @@ export async function parseMdxFiles(files: string[]): Promise<ParsedStep[]> {
 
       const kind = LANG_TO_KIND[lang as keyof typeof LANG_TO_KIND]
       if (kind) {
-        steps.push({ kind, command: normalizeCommand(kind, lang, code) })
+        const k: 'shell' | 'npm' | 'wrangler' = kind
+        steps.push({ kind: k, command: normalizeCommand(k, lang, code) })
       }
       match = fenceRegex.exec(content)
     }
